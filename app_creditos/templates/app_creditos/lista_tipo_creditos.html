@@ -1,0 +1,81 @@
+{% extends "app_creditos/base.html" %}
+
+{% block contenido %}
+<section>
+  <div class="text-center">
+    <h1>Tipos de creditos</h1>
+    <a class="btn btn-primary" href="{% url 'crear_tipo_creditos' %}">Crear tipo de credito Nuevo</a>
+    
+    <br><br>
+    <form action="{% url 'lista_tipo_creditos' %}" method="get">
+      {% csrf_token %}
+      
+    </form>
+    <br>
+    <div class="card-body table-responsive">
+      <table class="table table-hover" id="Tipocredito-Listado">
+          <caption>Hacé click sobre la fila para ver más</caption>
+          <thead class="thead-dark" >
+            <tr>
+              <th>ID</th>
+              <th>Tipo de Crédito</th>
+              <th>TNA %</th>              
+            </tr>
+          </thead> 
+          <tbody > 
+        {% for tipo in object_list %}
+            <tr>
+              <td>{{ tipo.id }}</td>
+              <td>{{ tipo.nombre_credito }}</td>
+              <td>{{ tipo.interes }}</td>              
+              
+            </tr>
+        {% endfor %}
+            
+            
+        
+        <script>  
+          
+          var table=$('#Tipocredito-Listado').DataTable({
+              "order": [[ 0, "asc" ]],
+              language:{
+                  url:'https://cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json',
+                  
+              },
+              
+              columnDefs: [
+                  {
+                      targets: 0,
+                      className: 'text-center'
+                  },
+                  {
+                      targets: 1,
+                      className: 'text-center'
+                  },
+                  {
+                      targets: 2,
+                      className: 'text-center'
+                  },
+                                                 
+                  
+              ]
+        
+          })
+        
+
+        $('#Tipocredito-Listado tbody').on('click', 'tr', function() {
+          console.log("Fila clickeada");
+        
+          var data = table.row( this ).data();
+          var id=data[0].replace(/\D/g,'')
+          
+          location.replace('/app-creditos/tipo-creditos/'+id)
+        
+        } );
+      </script>
+      </tbody>
+    </table>
+  </div>
+</div>
+</section>
+{% endblock contenido %}

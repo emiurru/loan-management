@@ -1,0 +1,47 @@
+{% extends "app_creditos/base.html" %}
+
+{% block contenido %}
+{% if user.is_authenticated %}
+<div class="text-center">
+    <h1>Bienvenidos a <span style="color: rgba(0, 255, 94, 0.644)">LONG</span><span style="color: rgb(60, 0, 255)">CRED</span></h1>
+  </div>
+{% else %}
+<div class="text-center">
+  <h3><span style="color: rgba(0, 255, 94, 0.644)">LONG</span><span style="color: rgb(60, 0, 255)">CRED</span></h3>
+</div>
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-6">
+      <div class="card login-form">
+        <div class="card-body d-flex flex-column align-items-center">
+          <form method="post" class="custom-form">
+            {% csrf_token %}
+            <div class="d-flex flex-column align-items-center">
+              <h5>Autenticación</h5>
+              <br>  
+              <div class="mb-3">
+                <div>
+                  {{ form.username.label_tag }}
+                </div>
+                <div>
+                  {{ form.username }}
+                </div>
+              </div>
+              <div class="mb-3">
+                <div>
+                  {{ form.password.label_tag }}
+                </div>
+                <div>
+                  {{ form.password }}
+                </div>
+              </div>
+              <input type="submit" value="Entrar" class="btn btn-primary" />
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+{% endblock contenido %}

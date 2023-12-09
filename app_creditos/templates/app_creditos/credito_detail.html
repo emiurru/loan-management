@@ -1,0 +1,51 @@
+{% extends "app_creditos/base.html" %}
+
+{% block contenido %}
+
+<p>
+  <strong>ID credito:</strong> {{object.id}}
+</p>
+<p>
+  <strong>Cliente:</strong> {{object.cliente}}
+</p>
+<p>
+  <strong>Tipo de crédito:</strong> {{object.tipo_credito}}
+</p> 
+<p>
+  <strong>Monto:</strong> ${{object.importe_credito}}
+</p>
+<p>
+  <strong>Nro de Cuotas:</strong> {{object.cuotas}}
+</p>
+<p>
+  <strong>Importe Cuotas:</strong> ${{object.importe_cuota}}
+</p>
+<p>
+  <strong>Email:</strong> {{object.email}}
+</p>
+<table class="table">
+  <tbody>
+    <tr>
+      <th>Nro cuota</th>
+      <th>Fecha Vencimiento</th>
+      <th>Importe cuota</th>
+      <th>Fecha pago</th>
+      <th>Importe pago</th>
+      <th>Estado</th>
+    </tr>
+    {% for cuota in cuotas %}
+    <tr>
+      <td>{{ cuota.numero_cuota }}</td>
+      <td>{{ cuota.fecha_vencimiento }}</td>
+      <td>${{ cuota.importe_cuota }}</td>
+      <td>${{ cuota.fecha_pago }}</td>
+      <td>${{ cuota.monto_pagado }}</td>
+      <td>{{ cuota.estado }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<br>
+<a href="{% url 'lista_creditos' %}">Volver a Créditos</a>
+
+{% endblock contenido %}

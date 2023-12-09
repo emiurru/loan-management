@@ -1,0 +1,105 @@
+{% extends "app_creditos/base.html" %}
+
+{% block contenido %}
+<section>
+  <div class="text-center">
+    <h1>Listado de créditos otorgados</h1>
+    <a class="btn btn-primary" href="{% url 'crear_creditos' %}">Solicitar nuevo crédito</a>
+    <br><br>
+    <form action="{% url 'lista_creditos' %}" method="get">
+      {% csrf_token %}
+      
+    </form>
+    <br>
+    <div class="card-body table-responsive">
+      <table class="table table-hover" id="Creditos-Listado">
+          <caption>Hace click sobre la fila para ver más</caption>
+          <thead class="thead-dark" >
+        <tr>
+          <th>ID credito</th>
+          <th>Fecha otorgamiento</th>
+          <th>Cliente</th>
+          <th>Tipo de Crédito</th>
+          <th>Monto otorgado</th>
+          <th>Nro cuotas</th>
+          <th>Importe cuota</th>
+          
+        </tr>
+      </thead> 
+      <tbody >        
+          {% for credito in object_list %}
+          <tr>
+            <td>{{ credito.id }}</td>
+            <td>{{ credito.fecha_otorgamiento }}</td>
+            <td>{{ credito.cliente }}</td>
+            <td>{{ credito.tipo_credito.nombre_credito }}</td>
+            <td>${{ credito.importe_credito }}</td>
+            <td>{{ credito.cuotas }}</td>
+            <td>${{ credito.importe_cuota }}</td>          
+            
+          </tr>
+          {% endfor %}
+        
+          <script>
+  
+            var table=$('#Creditos-Listado').DataTable({
+                "order": [[ 1, "desc" ]],
+                language:{
+                    url:'https://cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json',
+                    
+                },
+                
+                columnDefs: [
+                    {
+                        targets: 0,
+                        className: 'text-center'
+                    },
+                    {
+                        targets: 1,
+                        className: 'text-center'
+                    },
+                    {
+                        targets: 2,
+                        className: 'text-center'
+                    },
+                    {
+                        targets: 3,
+                        className: 'text-center'
+                    },
+                    {
+                        targets: 4,
+                        className: 'text-center'
+                    },
+                    {
+                        targets: 5,
+                        className: 'text-center'
+                    },
+                    {
+                        targets: 6,
+                        className: 'text-center'
+                    },
+                    
+                
+                    
+                ]
+          
+            })
+          $('#Creditos-Listado tbody').on('click', 'tr', function() {
+            console.log("Fila clickeada");
+          
+            var data = table.row( this ).data();
+            var id=data[0].replace(/\D/g,'')
+            
+            location.replace('/app-creditos/creditos/'+id)
+          
+          } );
+          
+          
+          </script>
+          
+          </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+{% endblock contenido %}

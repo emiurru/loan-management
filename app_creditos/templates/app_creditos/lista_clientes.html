@@ -1,0 +1,89 @@
+{% extends "app_creditos/base.html" %}
+
+{% block contenido %}
+<section>
+  <div class="text-center">
+    <h1>Listado de clientes</h1>
+    <a class="btn btn-warning" href="{% url 'crear_clientes' %}">Crear nuevo cliente</a>
+    <br><br>
+    <form action="{% url 'lista_clientes' %}" method="get">
+      {% csrf_token %}
+      
+    </form>
+    <br>
+    <br>
+    <div class="card-body table-responsive">
+      <table class="table table-hover" id="Clientes-Listado">
+          <caption>Hace Clic sobre la fila para ver más</caption>
+          <thead class="thead-dark" >
+              <tr>
+                <th>ID</th>
+                <th>Nombre</th>                
+                <th>DNI</th>
+                <th>Celular</th>
+                <th>Email</th>                
+              </tr>
+        </thead> 
+        <tbody > 
+            {% for client in object_list %}
+            <tr>
+              <td>{{ client.id }}</td>
+              <td>{{ client.apellido }} {{ client.nombre }}</td>
+              <td>{{ client.dni }}</td>
+              <td>{{ client.celular }}</td>
+              <td>{{ client.email }}</td>          
+            </tr>
+        {% endfor %}
+        <script>
+  
+          var table=$('#Clientes-Listado').DataTable({
+              "order": [[ 1, "desc" ]],
+              language:{
+                  url:'https://cdn.datatables.net/plug-ins/1.10.25/i18n/Spanish.json',
+                  
+              },
+              
+              columnDefs: [
+                  {
+                      targets: 0,
+                      className: 'text-center'
+                  },
+                  {
+                      targets: 1,
+                      className: 'text-center'
+                  },
+                  {
+                      targets: 2,
+                      className: 'text-center'
+                  },
+                  {
+                      targets: 3,
+                      className: 'text-center'
+                  },
+                  {
+                      targets: 4,
+                      className: 'text-center'
+                  },
+                                
+                  
+              ]
+        
+          })
+        $('#Clientes-Listado tbody').on('click', 'tr', function() {
+          console.log("Fila clickeada");
+        
+          var data = table.row( this ).data();
+          var id=data[0].replace(/\D/g,'')
+          
+          location.replace('/app-creditos/clientes/'+id)
+        
+        } );
+        
+        
+        </script>
+        </tbody>
+    </table>
+  </div>
+</div>
+</section>
+{% endblock contenido %}

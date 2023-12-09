@@ -1,0 +1,99 @@
+{% extends "app_creditos/base.html" %}
+
+{% block contenido %}
+<h3 class="m-0 font-weight-bold text-center" style="color: rgba(0, 255, 94, 0.644)">CLIENTE</h3>
+<br>
+<div class="d-flex justify-content-center align-items-center" style="min-height: 10vh;">
+    <div class="col-md-10">
+    
+    <div class="card shadow mb-4">
+        <div class="card-body">          
+            <h4 class="m-0 font-weight-bold text-primary  text-center">{{object.apellido}} {{object.nombre}}</h4>
+            <br>
+            <h5 class="m-0 font-weight-bold text-muted mb-3 text-center">{{object.dni}}</h5>
+            <hr>
+            <div class="row d-flex justify-content-around ">
+              <div class="col-lg-auto col-6 mb-3">
+                  <div class="row d-flex justify-content-center">
+                      <h6 class="text-center text-primary">Creado</h6>
+                  </div>
+                  <div class="row d-flex justify-content-center">        
+                      <h6 class="text-center">{{object.created_at|date:"d-m-y"}} </h6>
+                    
+                  </div>        
+              </div>
+
+              <div class="col-lg-auto col-12 mb-3">
+                  <div class="row d-flex justify-content-center">
+                      <h6 class="text-center text-primary">Id Cliente</h6>
+                  </div>
+                  <div class="row d-flex justify-content-center">
+                      <h6 class="text-center">{{object.id}} </h6>
+                  </div>        
+              </div>
+              <div class="col-lg-auto col-6 mb-3">
+                <div class="row d-flex justify-content-center">
+
+                    <h6 class="text-center text-primary">Ult. Actualización</h6>
+                </div>
+                <div class="row d-flex justify-content-center">        
+                    <h6 class="text-center">{{object.updated_at|date:"d-m-y"}} </h6>
+                  
+                </div>        
+            </div>
+            </div>
+            <hr>
+
+            <h5 class="m-0 font-weight-bold text-muted mb-3 text-center">Datos personales</h5>
+
+            <div class="row d-flex justify-content-around ">
+                <div class="col-lg-auto col-4">
+                    <div class="row d-flex justify-content-center">
+                        <h6 class="text-center text-primary">Fec. Nacimiento</h6>
+                    </div>
+                    <div class="row d-flex justify-content-center">
+                        <h6 class="text-center">{{object.fecha_nacimiento}} </h6>
+                    </div>
+                </div>
+                  
+                <div class="col-lg-auto col-4">
+                    <div class="row d-flex justify-content-center">
+                        <h6 class="text-center text-primary">Teléfono Fijo</h6>
+                    </div>
+                    <div class="text-center row d-flex justify-content-center">
+                        <h6>{{object.tel_fijo|default_if_none:""}} </h6>
+                    </div>
+                </div>
+
+                <div class="col-lg-auto col-4">
+                    <div class="row d-flex justify-content-center">
+                        <h6 class="text-center text-primary">Teléfono celular</h6>
+                    </div>
+                    <div class="text-center row d-flex justify-content-center">
+                        <h6>{{object.celular|default_if_none:""}} </h6>
+                    </div>
+                </div>
+
+                <div class="col-lg-auto col-4">
+                    <div class="row d-flex justify-content-center">
+                        <h6 class="text-center text-primary">Email</h6>
+                    </div>
+                    <div class="text-center row d-flex justify-content-center">
+                        <h6>{{object.email|default_if_none:""}} </h6>
+                    </div>
+                </div>
+            </div>
+                <hr>
+                <div style="display: flex; justify-content: center;">
+                  <a href="{% url 'lista_clientes' %}" class="btn btn-warning mx-5">Volver</a>
+                  <a href="{% url 'editar_clientes' object.pk %}" class="btn btn-primary mx-3">Editar</a>                
+                </div>  
+
+            </div>
+          </div>
+        </div>
+      </div>
+     
+
+
+{% endblock contenido %}

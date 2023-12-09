@@ -1,0 +1,15 @@
+{% extends "app_creditos/base.html" %}
+
+{% block contenido %}
+<section>
+  <div class="text-center">
+  <h1>Resultado de la cotización</h1>
+  <h5>El valor descontado del cheque es:</h5>
+  <h3>$ {{ valor_descontado }} </h3>
+  <p>Monto del cheque es: $ {{ monto }}</p>
+  <p>TNA: {{ tna1 }} %</p>
+  <p>Fecha de depósito es: {{ fecha_deposito }}</p>
+  
+  </div>
+</section>
+{% endblock contenido %}

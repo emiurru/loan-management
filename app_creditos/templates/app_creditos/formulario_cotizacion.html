@@ -1,0 +1,23 @@
+{% extends "app_creditos/base.html" %}
+
+{% block contenido %}
+<section>
+  <div class="text-center">
+    <h1>Cotizador de cheques</h1>
+	<form action="{% url 'cotizar-cheque' %}" method="POST">
+		{% csrf_token %}
+		<label for="monto">Monto del cheque:</label>
+		<br>
+		<input type="number" id="monto" name="monto" required>
+		<br>
+		<label for="fecha_deposito">Fecha de depósito:</label>
+		<br>
+		<input type="date" id="fecha_deposito" name="fecha_deposito" required>
+		<br>
+		<br>
+		<input type="submit" value="Cotizar">
+    </form>
+    
+  </div>
+</section>
+{% endblock contenido %}

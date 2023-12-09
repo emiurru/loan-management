@@ -1,0 +1,17 @@
+{% extends "app_creditos/base.html" %}
+
+{% block contenido %}
+<div class="text-center">
+    {% if user.is_authenticated %}
+    <h1>Bienvenidos a <span style="color: rgba(0, 255, 94, 0.644)">LONG</span><span style="color: rgb(60, 0, 255)">CRED</span></h1>
+    {% else %}
+    <br>
+    <form method="post" action="{% url 'login' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Iniciar sesión</button>
+    </form>
+    {% endif %}
+  
+</div>
+{% endblock contenido %}
