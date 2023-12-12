@@ -5,13 +5,12 @@
   <div class="text-center">
     <h1>Listado de clientes</h1>
     <a class="btn btn-warning" href="{% url 'crear_clientes' %}">Crear nuevo cliente</a>
-    <br><br>
+    
     <form action="{% url 'lista_clientes' %}" method="get">
       {% csrf_token %}
       
     </form>
-    <br>
-    <br>
+    <br>    
     <div class="card-body table-responsive">
       <table class="table table-hover" id="Clientes-Listado">
           <caption>Hace Clic sobre la fila para ver más</caption>

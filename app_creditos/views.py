@@ -1,15 +1,16 @@
 from typing import Any, Dict
 from django.shortcuts import render, redirect
 from django.urls import reverse, reverse_lazy
-from app_creditos.models import Cliente, Tipo_Credito, Credito, Lista_cuota, CobroCuota
-from .utils import calcular_descuento_cheque
-from datetime import datetime, timedelta
+from app_creditos.models import Cliente, Tipo_Credito, Credito, Lista_cuota
+from .utils import calcular_cuota
+from datetime import datetime, timedelta, date
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 from decimal import Decimal
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
+from dateutil.relativedelta import relativedelta
 
 
 # VISTAS CLIENTES
@@ -112,17 +113,61 @@ class CreditoListView(LoginRequiredMixin, ListView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-
-        busqueda = self.request.GET.get('busqueda', '')
-               
+        busqueda = self.request.GET.get('busqueda', '')               
         queryset = queryset.filter(tipo_credito__nombre_credito__icontains=busqueda)
        
         return queryset
+    
+    def get_context_data(self, **kwargs):        
+        context = super().get_context_data(**kwargs)
+        
+        context['clientes'] = Cliente.objects.all()
+        context['tipos_creditos'] = Tipo_Credito.objects.all()
+
+        return context
+
      
-class CreditoCreateView(LoginRequiredMixin, CreateView):
-    model = Credito
-    fields = ('cliente', 'importe_credito', 'tipo_credito', 'cuotas', 'importe_cuota')
-    success_url = reverse_lazy('lista_creditos')
+def crear_credito(request):    
+    if request.method == "POST":
+        importe_credito = int(request.POST.get('importe_credito'))
+        cuotas = int(request.POST.get('cuotas'))
+        cliente_id = request.POST.get('cliente')
+        id_tipo_credito = request.POST.get('tipo_credito') 
+
+        tipo_credito = Tipo_Credito.objects.get(id=id_tipo_credito)
+       
+        tna = tipo_credito.interes
+        importe_cuota = calcular_cuota(importe_credito, cuotas, tna)
+
+        cliente = Cliente.objects.get(id=cliente_id)
+        clientes = Cliente.objects.all()
+        tipos_credito = Tipo_Credito.objects.all()
+
+        credito = Credito(
+            importe_credito=importe_credito,
+            cuotas = cuotas,
+            cliente = cliente,
+            tipo_credito = tipo_credito,
+            importe_cuota = importe_cuota
+        )
+        credito.save()
+        
+        for num_cuota in range(1, int(cuotas) + 1):
+                    fecha_vencimiento = date.today() + relativedelta(months=+num_cuota-1)
+                    
+                    Lista_cuota.objects.update_or_create(
+                        credito=credito,
+                        numero_cuota=num_cuota,
+                        defaults={
+                            'importe_cuota': importe_cuota,
+                            'fecha_vencimiento': fecha_vencimiento
+                        }
+                    )
+
+        return redirect('lista_creditos')
+    
+    return render(request, 'app_creditos/lista_creditos.html')
+
 
 class CreditoDetailView(LoginRequiredMixin, DetailView):
     model = Credito
@@ -146,53 +191,9 @@ class CreditoDeleteView(LoginRequiredMixin, DeleteView):
     model = Credito
     success_url = reverse_lazy('lista_creditos')
 
-#COBRO CUOTAS
-def registrar_cobro_cuota(request):
-    if request.method == 'POST':
-        credito_id = request.POST.get('credito_id')
-        numero_cuota = request.POST.get('numero_cuota')
-        fecha_pago = request.POST.get('fecha_pago')
-        monto_pago = request.POST.get('monto_pago')
+def eliminar_credito(request, pk):
 
-        try:
-            credito = Credito.objects.get(id=credito_id)
-            cuota = credito.lista_cuotas.get(numero_cuota=numero_cuota)
-        except (Credito.DoesNotExist, Lista_cuota.DoesNotExist):
-            # Manejar el caso cuando el crédito o la cuota no existen
-            return HttpResponse('Error: Crédito o cuota no encontrados')
+    credito=Credito.objects.get(pk=pk)
+    credito.delete()
 
-        # Actualizar el estado de la cuota a "Pagada"
-        cuota.estado = 'Pagada'
-        cuota.fecha_pago = fecha_pago
-        cuota.monto_pago = monto_pago
-        cuota.save()
-
-        # Crear el registro de cobro
-        CobroCuota.objects.create(
-            credito=credito,
-            numero_cuota=numero_cuota,
-            estado='Pagada',
-            fecha_pago=fecha_pago,
-            monto_pago=monto_pago
-        )
-
-        return HttpResponse('Cobro registrado exitosamente')
-
-    return render(request, 'registrar_cobro.html')
-
-def cotizar_cheque(request):
-    if request.method == 'POST':
-        monto = float(request.POST.get('monto'))
-        tna1 = 120
-        tna = tna1 / 100
-        fecha_deposito = datetime.strptime(request.POST.get('fecha_deposito'), '%Y-%m-%d').date()
-
-        valor_descontado = calcular_descuento_cheque(monto, tna, fecha_deposito)
-
-        return render(request, 'app_creditos/resultado_cotizacion.html', {'valor_descontado': valor_descontado, 'monto': int(monto), 'tna1': tna1, 'fecha_deposito': fecha_deposito})
-    else:
-        return render(request, 'app_creditos/formulario_cotizacion.html')
-    
-def resultado_cotizacion(request):
-    return render(request, 'app_creditos/resultado_cotizacion.html')
-
+    return redirect('lista_creditos') 

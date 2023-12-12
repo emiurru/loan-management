@@ -3,14 +3,20 @@
 {% block contenido %}
 <section>
   <div class="text-center">
-    <h1>Listado de créditos otorgados</h1>
-    <a class="btn btn-primary" href="{% url 'crear_creditos' %}">Solicitar nuevo crédito</a>
-    <br><br>
+    <h1>Listado de créditos otorgados</h1>    
+    
+    <button type="button" class="btn btn-success mx-3 solicitar-credito-btn" >
+      Nuevo crédito
+    </button>  
+    
+    <form action="{% url 'crear_creditos' %}" method="get">
+      {% csrf_token %}
+      
+    </form>
     <form action="{% url 'lista_creditos' %}" method="get">
       {% csrf_token %}
       
     </form>
-    <br>
     <div class="card-body table-responsive">
       <table class="table table-hover" id="Creditos-Listado">
           <caption>Hace click sobre la fila para ver más</caption>
@@ -93,13 +99,24 @@
             location.replace('/app-creditos/creditos/'+id)
           
           } );
-          
+          $(document).ready(function() {
+          // Agregar un event listener a tu botón
+          $('.solicitar-credito-btn').on('click', function() {
+                            
+            // Activar el modal utilizando JavaScript
+            $('#modalSolicitarCredito').modal('show');
+            
+          });
+        });
           
           </script>
-          
+                    
           </tbody>
       </table>
+      
     </div>
   </div>
 </section>
+
+{% include './modal_credito_create.html' %}
 {% endblock contenido %}

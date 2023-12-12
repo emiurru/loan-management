@@ -1,51 +1,205 @@
 {% extends "app_creditos/base.html" %}
 
+
 {% block contenido %}
 
-<p>
-  <strong>ID credito:</strong> {{object.id}}
-</p>
-<p>
-  <strong>Cliente:</strong> {{object.cliente}}
-</p>
-<p>
-  <strong>Tipo de crédito:</strong> {{object.tipo_credito}}
-</p> 
-<p>
-  <strong>Monto:</strong> ${{object.importe_credito}}
-</p>
-<p>
-  <strong>Nro de Cuotas:</strong> {{object.cuotas}}
-</p>
-<p>
-  <strong>Importe Cuotas:</strong> ${{object.importe_cuota}}
-</p>
-<p>
-  <strong>Email:</strong> {{object.email}}
-</p>
-<table class="table">
-  <tbody>
-    <tr>
-      <th>Nro cuota</th>
-      <th>Fecha Vencimiento</th>
-      <th>Importe cuota</th>
-      <th>Fecha pago</th>
-      <th>Importe pago</th>
-      <th>Estado</th>
-    </tr>
-    {% for cuota in cuotas %}
-    <tr>
-      <td>{{ cuota.numero_cuota }}</td>
-      <td>{{ cuota.fecha_vencimiento }}</td>
-      <td>${{ cuota.importe_cuota }}</td>
-      <td>${{ cuota.fecha_pago }}</td>
-      <td>${{ cuota.monto_pagado }}</td>
-      <td>{{ cuota.estado }}</td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+<div class="card shadow mb-4">
+  <div class="card-body">
+    <h5 class="font-weight-bold text-muted mb-3 text-center">Datos del cliente</h5>
+    <div class="row justify-content-around align-items-center">
+      <div class="col-lg-auto col-4 text-center">
+        <h6 class="text-primary">Nombre</h6>
+        <h6>{{ object.cliente.nombre }}</h6>
+      </div>
+      <div class="col-lg-auto col-4 text-center">
+        <h6 class="text-primary">DNI</h6>
+        <h6>{{ object.cliente.dni }}</h6>
+      </div>
+      <div class="col-lg-auto col-4 text-center">
+        <h6 class="text-primary">Celular</h6>
+        <h6>{{ object.cliente.celular }}</h6>
+      </div>
+      <div class="col-lg-auto col-4 text-center">
+        <h6 class="text-primary">Email</h6>
+        <h6>{{ object.cliente.email }}</h6>
+      </div>
+    </div>
+
+    <hr>
+
+    <h5 class="font-weight-bold text-muted mb-3 text-center">Datos Crédito</h5>
+    <div class="row justify-content-around align-items-center">
+      <div class="col-lg-auto col-4 text-center">
+        <h6 class="text-primary">ID crédito</h6>
+        <h6>{{ credito.id }}</h6>
+      </div>
+      <div class="col-lg-auto col-4 text-center">
+        <h6 class="text-primary">Fecha otorgamiento</h6>
+        <h6>{{ credito.fecha_otorgamiento }}</h6>
+      </div>
+      <div class="col-lg-auto col-4 text-center">
+        <h6 class="text-primary">Monto</h6>
+        <h6>$   {{ credito.importe_credito }}</h6>
+      </div>      
+      <div class="col-lg-auto col-4 text-center">
+        <h6 class="text-primary">Cantidad cuotas</h6>
+        <h6>{{ object.cuotas }}</h6>
+      </div>    
+      <div class="col-lg-auto col-4 text-center">
+        <h6 class="text-primary">Tipo Crédito</h6>
+        <h6>{{ credito.tipo_credito.nombre_credito }}</h6>
+      </div>
+      
+      <div class="col-lg-auto col-4 text-center">
+        <h6 class="text-primary">Total pagado</h6>
+        <h6>$ {{ pago_credito }}</h6>
+      </div>
+      <div class="col-lg-auto col-4 text-center">
+        <h6 class="text-primary">Deuda al día</h6>
+        <h6>$ {{ deuda }}</h6>
+      </div>
+    </div>
+  </div>  
+</div>
+
+
+
+<div>
+<div style="display: flex; justify-content: space-between; align-items: center;">
+  <div style="flex-grow: 1; display: flex; justify-content: center;">
+    <div class="dropdown mx-3">
+      <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        Opciones
+      </button>
+      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">     
+        <a class="dropdown-item" href="#" data-toggle="modal" data-target="#confirmDeleteModal">Eliminar crédito</a>
+      </div>
+    <button type="button" class="btn btn-success mx-3 ver-pagos-btn" data-cuota-id="{{ cuota.id }}">
+      Pagos
+    </button>      
+    
+  </div>
+  
+</div>
+</div>  
+<!-- Modal de eliminar credito -->
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h5 class="modal-title" id="confirmDeleteModalLabel">Confirmación</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+        <div class="modal-body">
+        ¿Está seguro que quiere eliminar este crédito?
+        </div>
+        <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+        <a href="{% url 'eliminar_credito' credito.id %}" class="btn btn-danger">Eliminar</a>
+        </div>
+    </div>
+  </div>
+</div>
+
+  
 <br>
-<a href="{% url 'lista_creditos' %}">Volver a Créditos</a>
+        <div id="tablaCuotas" style="display: block;">
+          <table class="table text-center">
+            <thead>
+              <tr class="table-dark">
+                <th scope="col">Nro cuota</th>
+                <th scope="col">Fecha Vencimiento</th>
+                <th scope="col">Importe cuota</th>
+                <th scope="col">Importe actualizado</th>
+                <th scope="col">Total pagado</th>
+                <th scope="col">Mora</th>
+                <th scope="col">Estado</th>
+                <th scope="col">Acciones</th>
+                <th></th>          
+
+              </tr>
+            </thead>
+            <tbody>
+              {% for cuota in cuotas %}
+                <tr>
+                  <td>{{ cuota.numero_cuota }}</td>
+                  <td>{{ cuota.fecha_vencimiento|date:'d-m-y' }}</td>
+                  <td>${{ cuota.importe_cuota }}</td>
+                  <td>${{ cuota.importe_actualizado }}</td>
+                  <td>${{ cuota.total_pagado }}</td>
+                  <td>${{ cuota.mora }}</td>
+                  <td class="{% if cuota.estado == 'PENDIENTE' %}text-danger{% elif cuota.estado == 'PAGADA' %}text-success{% endif %}">
+                    {{ cuota.estado }}
+                  </td>
+                  <td>          
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalCobroCuota{{ cuota.id }}">
+                      Cobro cuota
+                    </button>
+                  </td>
+                  <td>          
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalCuotaUpdate{{ cuota.id }}">
+                      Editar
+                    </button>
+                  </td>                 
+                </tr>                      
+       
+    {% endfor %}
+    
+        </tbody>
+      </table>
+</div>
+<hr>
+
+
+<!-- Incluye jQuery y Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script>
+  // Esperar a que el documento se cargue completamente
+  $(document).ready(function() {
+    // Agregar un event listener a tu botón
+    $('.ver-pagos-btn').on('click', function() {
+      // Obtener el ID de la cuota desde el atributo data-cuota-id del botón
+      var cuotaId = $(this).data('cuota-id');
+            
+      // Activar el modal utilizando JavaScript
+      $('#modalVerPagos').modal('show');      
+      
+    });
+  });
+  </script>
+  <script>
+    // Esperar a que el documento se cargue completamente
+    $(document).ready(function() {
+      // Agregar un event listener a tu botón
+      $('.editar-cuota-btn').on('click', function() {
+        // Obtener el ID de la cuota desde el atributo data-cuota-id del botón
+        var cuotaId = $(this).data('cuota-id');
+              
+        // Activar el modal utilizando JavaScript
+        $('#modalCuotaUpdate').modal('show');
+        
+        
+      });
+    });
+    </script>
+
+<script>
+  // JavaScript para cambiar entre vistas
+  document.getElementById('btnCobranza').addEventListener('click', function() {
+      var tablaCuotas = document.getElementById('tablaCuotas');
+      var formCobranza = document.getElementById('formCobranza');
+  
+      // Ocultar la tabla de cuotas y mostrar el formulario de cobranza
+      tablaCuotas.style.display = 'none';
+      formCobranza.style.display = 'block';
+  });
+  </script>
+  
+
+
 
 {% endblock contenido %}
