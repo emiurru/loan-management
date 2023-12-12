@@ -4,7 +4,20 @@
 {% if user.is_authenticated %}
 <div class="text-center">
     <h1>Bienvenidos a <span style="color: rgba(0, 255, 94, 0.644)">LONG</span><span style="color: rgb(60, 0, 255)">CRED</span></h1>
-  </div>
+  <br>
+  <div class="card shadow mx-auto" style="max-width: 40%;" >
+    <div class="card-body">
+      <h5 class="font-weight-bold text-muted mb-3 text-center">Datos generales</h5>
+      <div class="row justify-content-around align-items-center">
+        <div class="text-center">
+          <h6 class="text-primary">Número de créditos otorgados</h6>
+          <h6>{{ creditos_totales }}</h6>
+        </div>
+        
+      </div>
+    </div>
+</div>
+
 {% else %}
 <div class="text-center">
   <h3><span style="color: rgba(0, 255, 94, 0.644)">LONG</span><span style="color: rgb(60, 0, 255)">CRED</span></h3>

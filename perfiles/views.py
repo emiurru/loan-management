@@ -9,6 +9,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from perfiles.forms import UserRegisterForm, UserUpdateForm
 from django.views.generic import UpdateView
 from perfiles.forms import AvatarFormulario
+from app_creditos.models import Credito
 
 
 
@@ -32,6 +33,8 @@ def registro(request):
 
 def login_view(request):
     next_url = request.GET.get('next')
+    creditos_totales = Credito.objects.all().count()
+    
     if request.method == "POST":
         form = AuthenticationForm(request, data=request.POST)
 
@@ -52,7 +55,7 @@ def login_view(request):
     return render(
         request=request,
         template_name='perfiles/login.html',
-        context={'form': form},
+        context={'form': form, 'creditos_totales': creditos_totales},
     )
 
 class CustomLogoutView(LogoutView):

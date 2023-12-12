@@ -57,7 +57,14 @@ class Lista_cuota(models.Model):
     credito = models.ForeignKey(Credito, on_delete=models.CASCADE, related_name='lista_cuotas')
     numero_cuota = models.IntegerField()
     importe_cuota = models.IntegerField(null=True, blank=True)
+    importe_actualizado = models.IntegerField(null=True, blank=True)
     fecha_vencimiento = models.DateField(null=True, blank=True)    
     fecha_pago = models.DateField(null=True, blank=True)
-    estado = models.CharField(max_length=10, choices=[('Pendiente', 'Pendiente'), ('Pagada', 'Pagada')], default='Pendiente')
+    estado = models.CharField(max_length=256,null=True, blank=True, default='PENDIENTE')
             
+class Pago(models.Model):
+    cuota = models.ForeignKey(Lista_cuota, on_delete=models.CASCADE, related_name='pagos')
+    monto_pagado = models.DecimalField(max_digits=10, decimal_places=2)
+    fecha_pago = models.DateField()
+    medio_pago = models.CharField(max_length=100)  # Ejemplo: 'efectivo', 'banco', 'MP'
+    tipo_pago = models.CharField(max_length=255, blank=True, null=True)  # Ejemplo: 'pago total', 'pago parcial', 'saldo cuota'

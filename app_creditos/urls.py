@@ -3,7 +3,8 @@ from django.urls import path
 
 from app_creditos.views import ClienteListView, ClienteDetailView, ClienteUpdateView, ClienteDeleteView, crear_tipo_credito,\
       Tipo_creditoListView, Tipo_creditoUpdateView, Tipo_creditoDeleteView, Tipo_creditoDetailView, CreditoListView,\
-      CreditoDeleteView, CreditoDetailView, CreditoUpdateView, crear_cliente, crear_credito, eliminar_credito
+      CreditoDeleteView, CreditoDetailView, CreditoUpdateView, crear_cliente, crear_credito, eliminar_credito, registrar_pago,\
+      actualizar_credito_individual, borrar_pago
 
 urlpatterns = [
     #URL Clientes
@@ -26,9 +27,11 @@ urlpatterns = [
     path('creditos/<int:pk>/', CreditoDetailView.as_view(), name="ver_creditos"),
     path('editar-creditos/<int:pk>/', CreditoUpdateView.as_view(), name="editar_creditos"),
     path('eliminar-credito/<int:pk>/', eliminar_credito, name="eliminar_credito"),
+    path('actualizar-credito/<int:pk>/', actualizar_credito_individual, name='actualizar_credito_individual'),
     
     #Cobro cuotas
-     
+    path('registrar_pago/<int:cuota_id>/', registrar_pago, name='registrar_pago'),
+    path('borrar_pago/<int:id_pago>/', borrar_pago, name='borrar_pago'),
     
         
 ] 

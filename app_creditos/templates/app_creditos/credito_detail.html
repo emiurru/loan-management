@@ -71,7 +71,13 @@
       <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         Opciones
       </button>
-      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">     
+      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+        <a class="dropdown-item" href="#" onclick="document.getElementById('actualizar-credito-form').submit();">Actualizar crédito</a>
+            <form id="actualizar-credito-form" method="post" action="{% url 'actualizar_credito_individual' object.id %}" style="display: none;">
+              {% csrf_token %}
+              
+            </form>
+        <div class="dropdown-divider"></div>     
         <a class="dropdown-item" href="#" data-toggle="modal" data-target="#confirmDeleteModal">Eliminar crédito</a>
       </div>
     <button type="button" class="btn btn-success mx-3 ver-pagos-btn" data-cuota-id="{{ cuota.id }}">
@@ -81,7 +87,68 @@
   </div>
   
 </div>
-</div>  
+</div> 
+<div class="modal fade" id="modalVerPagos" tabindex="-1" role="dialog" aria-labelledby="modalVerPagosLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document" style="max-width: 50%;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalVerPagosLabel{{ cuota.id }}">Listado de Pagos</h5>
+        
+      </div>
+      <div class="modal-body">
+        <!-- Tabla para listar los pagos -->
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th scope="col" class="text-center">Cuota nro.</th>
+              <th scope="col" class="text-center">Fecha Pago</th>
+              <th scope="col" class="text-center">Monto Pagado</th>
+              <th scope="col" class="text-center">Medio Pago</th>
+              <th scope="col" class="text-center">Tipo Pago</th>
+              <th scope="col" class="text-center">Borrar</th>
+              
+            </tr>
+          </thead>
+          <tbody>
+            {% for cuota in cuotas %}
+              {% for pago in cuota.pagos.all %}
+                <tr>
+                  <td class="text-center">{{ pago.cuota.numero_cuota }}</td>
+                  <td class="text-center">{{ pago.fecha_pago|date:"d-m-Y" }}</td>
+                  <td class="text-center">${{ pago.monto_pagado }}</td>
+                  <td class="text-center">{{ pago.medio_pago }}</td>
+                  <td class="text-center">{{ pago.tipo_pago }}</td>
+                  <td class="text-center">
+                    <form method="post" action="{% url 'borrar_pago' pago.id %}" onsubmit="return confirm('¿Está seguro que quiere eliminar este pago?');">
+                      {% csrf_token %}
+                      <button type="submit" class="btn btn-outline-danger bi bi-trash"></button>
+                    </form>
+                  </td>
+                  <script>
+                    function confirmDelete(pagoId) {
+                       if (confirm("¿Está seguro que quiere eliminar este pago?")) {
+                         var url = "{% url 'borrar_pago' '0' %}".replace('0', pagoId);
+                         window.location.href = url;
+                           return true;
+                       }
+                       return false;
+                   }
+                   
+                   </script>
+                                        
+                </tr>
+             
+              {% endfor %}  
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
 <!-- Modal de eliminar credito -->
 <div class="modal fade" id="confirmDeleteModal" tabindex="-1" role="dialog" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
   <div class="modal-dialog" role="document">
@@ -138,29 +205,74 @@
                       Cobro cuota
                     </button>
                   </td>
-                  <td>          
-                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalCuotaUpdate{{ cuota.id }}">
-                      Editar
-                    </button>
-                  </td>                 
-                </tr>                      
+                                   
+                </tr>  
+                <!-- Modal cobro cuota -->
+          <div class="modal fade" id="modalCobroCuota{{ cuota.id }}" tabindex="-1" role="dialog" aria-labelledby="modalCobroCuotaLabel{{ cuota.id }}" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="modalCobroCuotaLabel{{ cuota.id }}">Cobro de Cuota</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div class="modal-body">
+                  <!-- Aquí iría tu formulario para cobrar la cuota -->
+                  <form method="post" action="{% url 'registrar_pago' cuota.id %}">
+                    {% csrf_token %}
+                    <!-- Campos del formulario -->
+                    <div class="form-group">
+                      <label for="fecha_pago">Fecha pago</label>
+                      <input type="date" step="0.01" class="form-control" name="fecha_pago" value="{{ fecha_hoy }}" required>
+                    </div>
+                    <label for="importe_cuota">Importe:</label>
+                      <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">$</span>
+                        </div>
+                      <input type="number" step="0.01" class="form-control" name="monto_pagado" required>
+                    </div>
+                    <div class="form-group">
+                      <label for="medio_pago">Medio de Pago</label>
+                      <select class="form-control" name="medio_pago">
+                        <option value="Efectivo">Efectivo</option>
+                        <option value="PagoFacil">PagoFácil</option>
+                        <option value="Rapipago">Rapipago</option>
+                        <option value="MP">MP</option>
+                        <option value="Banco">Banco</option>
+                      </select>
+                    </div>
+                    <div class="form-group">
+                      <label for="tipo_pago">Tipo de Pago</label>
+                      <select class="form-control" name="tipo_pago">
+                        <option value="Total">Total</option>
+                        <option value="Parcial">Parcial</option>
+                        <option value="Pago Saldo">Pago Saldo</option>
+                      </select>
+                    </div>
+                    <button type="submit" class="btn btn-success">Confirmar Pago</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>                    
        
     {% endfor %}
     
         </tbody>
       </table>
 </div>
-<hr>
 
 
-<!-- Incluye jQuery y Bootstrap JS -->
+
+
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
 
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 <script>
-  // Esperar a que el documento se cargue completamente
   $(document).ready(function() {
-    // Agregar un event listener a tu botón
+    
     $('.ver-pagos-btn').on('click', function() {
       // Obtener el ID de la cuota desde el atributo data-cuota-id del botón
       var cuotaId = $(this).data('cuota-id');
@@ -171,35 +283,6 @@
     });
   });
   </script>
-  <script>
-    // Esperar a que el documento se cargue completamente
-    $(document).ready(function() {
-      // Agregar un event listener a tu botón
-      $('.editar-cuota-btn').on('click', function() {
-        // Obtener el ID de la cuota desde el atributo data-cuota-id del botón
-        var cuotaId = $(this).data('cuota-id');
-              
-        // Activar el modal utilizando JavaScript
-        $('#modalCuotaUpdate').modal('show');
-        
-        
-      });
-    });
-    </script>
-
-<script>
-  // JavaScript para cambiar entre vistas
-  document.getElementById('btnCobranza').addEventListener('click', function() {
-      var tablaCuotas = document.getElementById('tablaCuotas');
-      var formCobranza = document.getElementById('formCobranza');
-  
-      // Ocultar la tabla de cuotas y mostrar el formulario de cobranza
-      tablaCuotas.style.display = 'none';
-      formCobranza.style.display = 'block';
-  });
-  </script>
-  
-
-
+ 
 
 {% endblock contenido %}

@@ -1,0 +1,43 @@
+<!-- Modal para VER pagos -->
+<div class="modal fade" id="modalVerPagos" tabindex="-1" role="dialog" aria-labelledby="modalVerPagosLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document" style="max-width: 50%;">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modalVerPagosLabel{{ cuota.id }}">Listado de Pagos</h5>
+          
+        </div>
+        <div class="modal-body">
+          <!-- Tabla para listar los pagos -->
+          <table class="table table-hover">
+            <thead>
+              <tr>
+                <th scope="col" class="text-center">Cuota nro.</th>
+                <th scope="col" class="text-center">Fecha Pago</th>
+                <th scope="col" class="text-center">Monto Pagado</th>
+                <th scope="col" class="text-center">Medio Pago</th>
+                <th scope="col" class="text-center">Tipo Pago</th>
+                
+              </tr>
+            </thead>
+            <tbody>
+              {% for cuota in cuotas %}
+                {% for pago in cuota.pagos.all %}
+                  <tr>
+                    <td class="text-center">{{ pago.cuota.numero_cuota }}</td>
+                    <td class="text-center">{{ pago.fecha_pago|date:"d-m-Y" }}</td>
+                    <td class="text-center">${{ pago.monto_pagado }}</td>
+                    <td class="text-center">{{ pago.medio_pago }}</td>
+                    <td class="text-center">{{ pago.tipo_pago }}</td>
+                                          
+                  </tr>
+               
+                {% endfor %}  
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  

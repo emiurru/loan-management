@@ -4,6 +4,19 @@
 <div class="text-center">
     {% if user.is_authenticated %}
     <h1>Bienvenidos a <span style="color: rgba(0, 255, 94, 0.644)">LONG</span><span style="color: rgb(60, 0, 255)">CRED</span></h1>
+    <br>
+    <div class="card shadow custom-card">
+        <div class="card-body">
+          <h5 class="font-weight-bold text-muted mb-3 text-center">Datos generales</h5>
+          <div class="row justify-content-around align-items-center">
+            <div class="text-center">
+              <h6 class="text-primary">Número de créditos activos</h6>
+              <h6>{{ creditos_activos }}</h6>
+            </div>
+            
+          </div>
+        </div>
+    </div>
     {% else %}
     <br>
     <form method="post" action="{% url 'login' %}">
