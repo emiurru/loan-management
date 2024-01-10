@@ -63,9 +63,19 @@ class ClienteUpdateView(LoginRequiredMixin, UpdateView):
     def get_success_url(self):
         return reverse_lazy('ver_clientes', kwargs={'pk': self.object.pk})
 
-class ClienteDeleteView(LoginRequiredMixin, DeleteView):
-    model = Cliente
-    success_url = reverse_lazy('lista_clientes')
+def eliminar_cliente(request, pk):
+
+    cliente=Cliente.objects.get(pk=pk)
+    cliente.delete()
+
+    return redirect('lista_clientes') 
+
+def eliminar_credito(request, pk):
+
+    credito=Credito.objects.get(pk=pk)
+    credito.delete()
+
+    return redirect('lista_creditos') 
 
 # VISTAS TIPOS DE CREDITOS
 class Tipo_creditoListView(ListView):
@@ -102,9 +112,12 @@ class Tipo_creditoUpdateView(LoginRequiredMixin, UpdateView):
     def get_success_url(self):
         return reverse_lazy('ver_tipo_creditos', kwargs={'pk': self.object.pk})
     
-class Tipo_creditoDeleteView(LoginRequiredMixin, DeleteView):
-    model = Tipo_Credito
-    success_url = reverse_lazy('lista_tipo_creditos')
+def eliminar_tipo_credito(request, pk):
+
+    tipo_credito=Tipo_Credito.objects.get(pk=pk)
+    tipo_credito.delete()
+
+    return redirect('lista_tipo_creditos') 
 
 #VISTAS DE CREDITOS
 
@@ -179,7 +192,9 @@ class CreditoDetailView(LoginRequiredMixin, DetailView):
 
         cuotas = credito.lista_cuotas.all()
         context['cuotas'] = cuotas
-        fecha_hoy = timezone.now().date().strftime('%Y-%m-%d')
+
+        hoy_local = timezone.localtime(timezone.now())
+        fecha_hoy = hoy_local.date().strftime('%Y-%m-%d')
 
         context['fecha_hoy'] = fecha_hoy
         pagos_por_cuota = {cuota.id: cuota.pagos.all() for cuota in cuotas}
@@ -212,13 +227,6 @@ class CreditoDeleteView(LoginRequiredMixin, DeleteView):
     model = Credito
     success_url = reverse_lazy('lista_creditos')
 
-def eliminar_credito(request, pk):
-
-    credito=Credito.objects.get(pk=pk)
-    credito.delete()
-
-    return redirect('lista_creditos') 
-
 def registrar_pago(request, cuota_id):
     cuota = get_object_or_404(Lista_cuota, pk=cuota_id)
     credito_id = cuota.credito.id
@@ -245,8 +253,7 @@ def registrar_pago(request, cuota_id):
                 cuota.save()
                 
             actualizar_creditos(credito_id)
-            messages.success(request, 'El pago ha sido registrado exitosamente.')
-
+            
             return redirect('ver_creditos', pk=credito_id)
         
         except Exception as e:
@@ -260,7 +267,6 @@ def actualizar_credito_individual(request, pk):
         
         return redirect('ver_creditos', pk=pk)
     
-
 def borrar_pago(request, id_pago):
     pago = get_object_or_404(Pago, pk=id_pago)
     

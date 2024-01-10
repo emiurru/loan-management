@@ -24,7 +24,7 @@
 
               <div class="col-lg-auto col-12 mb-3">
                   <div class="row d-flex justify-content-center">
-                      <h6 class="text-center text-primary">TNA</h6>
+                      <h6 class="text-center text-primary">TNA %</h6>
                   </div>
                   <div class="row d-flex justify-content-center">
                       <h6 class="text-center">{{object.interes}} </h6>
@@ -35,8 +35,9 @@
             </div>
             <hr>
             <div style="display: flex; justify-content: center;">
-              <a href="{% url 'lista_tipo_creditos' %}" class="btn btn-warning mx-5">Volver</a>
-              <a href="{% url 'editar_tipo_creditos' object.pk %}" class="btn btn-primary mx-3">Editar</a>     
+              <a href="{% url 'lista_tipo_creditos' %}" class="btn btn-warning mx-3">Volver</a>
+              <a href="{% url 'editar_tipo_creditos' object.pk %}" class="btn btn-primary mx-3">Editar</a>
+              <a href="{% url 'eliminar_tipo_creditos' object.pk %}" class="btn btn-danger mx-3">Eliminar</a>       
             </div>
           </div>
         </div>

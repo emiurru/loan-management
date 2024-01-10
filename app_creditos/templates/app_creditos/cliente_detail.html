@@ -85,8 +85,9 @@
             </div>
                 <hr>
                 <div style="display: flex; justify-content: center;">
-                  <a href="{% url 'lista_clientes' %}" class="btn btn-warning mx-5">Volver</a>
-                  <a href="{% url 'editar_clientes' object.pk %}" class="btn btn-primary mx-3">Editar</a>                
+                  <a href="{% url 'lista_clientes' %}" class="btn btn-warning mx-3">Volver</a>
+                  <a href="{% url 'editar_clientes' object.pk %}" class="btn btn-primary mx-3">Editar</a>
+                  <a href="{% url 'eliminar_cliente' object.pk %}" class="btn btn-danger mx-3">Eliminar</a>                   
                 </div>  
 
             </div>
